@@ -39,32 +39,13 @@ class _BoardState extends State<Board> {
         var cell = widget._game.context
             .players[widget._game.context.currentPlayerIndex].board.tiles
             .elementAt(index);
+            
         if (cell.value == "") {
           setState(() {
             selectedCellIndex = index;
             if (selectedCellIndex != null && selectedCellIndex! > -1) {
-              widget
-                  ._game
-                  .context
-                  .players[widget._game.context.currentPlayerIndex]
-                  .board
-                  .tiles[selectedCellIndex!]
-                  .index = index;
-              widget
-                  ._game
-                  .context
-                  .players[widget._game.context.currentPlayerIndex]
-                  .board
-                  .tiles[selectedCellIndex!]
-                  .color = GameColor.selected;
-            } else {
-              widget
-                  ._game
-                  .context
-                  .players[widget._game.context.currentPlayerIndex]
-                  .board
-                  .tiles[selectedCellIndex!]
-                  .color = GameColor.empty;
+              cell.index = index;
+              cell.color = GameColor.selected;
             }
           });
         }
