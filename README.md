@@ -1,3 +1,2 @@
-# wordquare_mobile
-
-A new Flutter project.
+# FlutterDemo
+Basic demo for flutter.
