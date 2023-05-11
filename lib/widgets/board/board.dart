@@ -25,12 +25,114 @@ class _BoardState extends State<Board> {
             gridState: widget._game.context
                 .players[widget._game.context.currentPlayerIndex].board,
             onCellClicked: onCellClicked),
-        const SizedBox(height: 20),
-        Alphabet(onLetterPressed: onLetterPressed)
+        const SizedBox(height: 5),
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Container(
+              width: 45,
+              alignment: Alignment.center,
+              margin:
+                  const EdgeInsets.symmetric(vertical: 3.0, horizontal: 2.0),
+              padding:
+                  const EdgeInsets.symmetric(vertical: 17.0, horizontal: 13.0),
+              decoration: BoxDecoration(
+                  color: Colors.black87,
+                  borderRadius: BorderRadius.circular(6)),
+              child: Text(
+                widget._game.context.keyboard.selectedLetter != null
+                    ? widget._game.context.keyboard.selectedLetter!
+                    : " ",
+                style: const TextStyle(fontSize: 14, color: Colors.white),
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 50),
+        Alphabet(
+          keyboard: widget._game.context.keyboard,
+          onLetterPressed: onLetterPressed,
+          onAccepted: onAccepted,
+          onCancelled: onCancelled,
+        )
       ],
     );
   }
 
+  onCellClicked(int index) {
+    setState(() {
+      widget._game.context.players[widget._game.context.currentPlayerIndex]
+          .board.tiles
+          .where((element) => element.color == GameColor.selected)
+          .forEach((element) {
+        element.color = GameColor.empty;
+        widget._game.context.keyboard.selectedLetter = null;
+      });
+
+      if (selectedCellIndex == index) {
+        selectedCellIndex = null;
+        widget._game.context.keyboard.state = KeyboardState.disabled;
+        widget._game.context.keyboard.selectedLetter = null;
+      } else {
+        selectedCellIndex = index;
+        widget._game.context.keyboard.state = KeyboardState.lettersOnly;
+
+        var cell = widget._game.context
+            .players[widget._game.context.currentPlayerIndex].board.tiles
+            .elementAt(index);
+        if (cell.value == "") {
+          selectedCellIndex = index;
+          if (selectedCellIndex != null && selectedCellIndex! > -1) {
+            cell.color = GameColor.selected;
+          }
+        } else {
+          selectedCellIndex = null;
+        }
+      }
+    });
+  }
+
+  onAccepted() {
+    var cell = widget._game.context
+        .players[widget._game.context.currentPlayerIndex].board.tiles
+        .elementAt(selectedCellIndex!);
+    setState(() {
+      if (cell.value == "") {
+        selectedCellIndex = null;
+        cell.color = GameColor.confirmed;
+        cell.value = widget._game.context.keyboard.selectedLetter!;
+        widget._game.context.keyboard.selectedLetter = null;
+        widget._game.context.keyboard.state = KeyboardState.disabled;
+      }
+    });
+  }
+
+  onCancelled() {
+    setState(() {
+      selectedCellIndex = null;
+      widget._game.context.keyboard.selectedLetter = null;
+      widget._game.context.keyboard.state = KeyboardState.disabled;
+      widget._game.context.players[widget._game.context.currentPlayerIndex]
+          .board.tiles
+          .where((element) => element.color == GameColor.selected)
+          .forEach((element) {
+        element.color = GameColor.empty;
+      });
+    });
+  }
+
+  onLetterPressed(String letter) {
+    setState(() {
+      if (selectedCellIndex! > -1) {
+        widget._game.context.keyboard.state = KeyboardState.actionsOnly;
+        widget._game.context.keyboard.selectedLetter = letter;
+      } else {
+        widget._game.context.keyboard.state = KeyboardState.disabled;
+      }
+    });
+  }
+  /*
   onCellClicked(int index) {
     setState(() {
       if (selectedCellIndex == index) {
@@ -84,4 +186,5 @@ class _BoardState extends State<Board> {
       }
     });
   }
+  */
 }

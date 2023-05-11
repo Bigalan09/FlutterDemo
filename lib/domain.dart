@@ -1,4 +1,23 @@
 enum GameColor { empty, selected, confirmed }
+enum KeyboardState { actionsOnly, lettersOnly, singleLetter, disabled }
+
+class Keyboard {
+  KeyboardState state;
+  String? selectedLetter;
+
+  Keyboard({this.state = KeyboardState.disabled, this.selectedLetter});
+
+  Keyboard.fromJson(Map<String, dynamic> json)
+      : state = KeyboardState.values.byName(json['state']),
+        selectedLetter = json['selectedLetter'];
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['selectedLetter'] = selectedLetter;
+    data['state'] = state;
+    return data;
+  }
+}
 
 class Letter {
   int index;
@@ -86,10 +105,11 @@ class Player {
 class Context {
   List<Player> players;
   List<List<Letter>> keys;
+  Keyboard keyboard;
   int currentPlayerIndex;
   String currentLetter;
 
-  Context(this.players, this.keys, this.currentLetter, this.currentPlayerIndex);
+  Context(this.players, this.keys, this.keyboard, this.currentLetter, this.currentPlayerIndex);
 
   factory Context.fromJson(Map<String, dynamic> json) {
     var keys = <List<Letter>>[];
@@ -115,8 +135,9 @@ class Context {
 
     var currentLetter = json['currentLetter'];
     var currentPlayerIndex = json['currentPlayerIndex'] as int;
+    var keyboard = Keyboard.fromJson(json['keyboard']);
 
-    return Context(players, keys, currentLetter, currentPlayerIndex);
+    return Context(players, keys, keyboard, currentLetter, currentPlayerIndex);
   }
 
   Map<String, dynamic> toJson() {
@@ -125,6 +146,7 @@ class Context {
     data['keys'] = keys;
     data['currentPlayerIndex'] = currentPlayerIndex;
     data['currentLetter'] = currentLetter;
+    data['keyboard'] = keyboard;
     return data;
   }
 }

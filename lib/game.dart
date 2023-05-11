@@ -12,8 +12,9 @@ class WordSquare {
     List<List<Letter>> keys = <List<Letter>>[];
     int currentPlayerIndex = 0;
     String currentLetter = "";
+    Keyboard keyboard = Keyboard();
 
-    _context = Context(players, keys, currentLetter, currentPlayerIndex);
+    _context = Context(players, keys, keyboard, currentLetter, currentPlayerIndex);
 
     return true;
   }

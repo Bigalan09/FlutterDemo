@@ -1,21 +1,30 @@
 import 'package:flutter/material.dart';
+import 'package:wordquare_mobile/domain.dart';
 
 class Alphabet extends StatefulWidget {
   final Function(String) onLetterPressed;
-  const Alphabet({required this.onLetterPressed, super.key});
+  final Function onCancelled;
+  final Function onAccepted;
+  final Keyboard keyboard;
+
+  const Alphabet({
+    required this.onLetterPressed,
+    required this.onCancelled,
+    required this.onAccepted,
+    required this.keyboard,
+    super.key,
+  });
 
   @override
   State<Alphabet> createState() => _AlphabetState();
 }
 
 class _AlphabetState extends State<Alphabet> {
-  bool keyboardEnabled = true;
-
   @override
   Widget build(BuildContext context) {
     List<String> row1 = ['Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P'];
     List<String> row2 = ['A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L'];
-    List<String> row3 = ['CANCEL','Z', 'X', 'C', 'V', 'B', 'N', 'M', 'ACCEPT'];
+    List<String> row3 = ['CANCEL', 'Z', 'X', 'C', 'V', 'B', 'N', 'M', 'ACCEPT'];
 
     return Column(
       children: [
@@ -38,19 +47,36 @@ class _AlphabetState extends State<Alphabet> {
                   size: 14.0,
                 );
               }
+              bool keyEnabled = true;
+
+              if ((letter != "ACCEPT" &&
+                      widget.keyboard.state == KeyboardState.actionsOnly) &&
+                  (letter != "CANCEL" &&
+                      widget.keyboard.state == KeyboardState.actionsOnly)) {
+                keyEnabled = false;
+              }
+
+              if ((letter == "ACCEPT" &&
+                      widget.keyboard.state == KeyboardState.lettersOnly) ||
+                  (letter == "CANCEL" &&
+                      widget.keyboard.state == KeyboardState.lettersOnly)) {
+                keyEnabled = false;
+              }
+
+              if (widget.keyboard.state == KeyboardState.disabled) {
+                keyEnabled = false;
+              }
 
               return GestureDetector(
-                onTap: keyboardEnabled
-                    ? () {
-                        setState(() {
-                          if (letter == "ACCEPT" || letter == "CANCEL") {
-                            keyboardEnabled = !keyboardEnabled;
-                          } else {
-                            widget.onLetterPressed(letter);
-                          }
-                        });
-                      }
-                    : null,
+                onTap: keyEnabled ? () {
+                  if (letter == "ACCEPT") {
+                    widget.onAccepted();
+                  } else if (letter == "CANCEL") {
+                    widget.onCancelled();
+                  } else {
+                    widget.onLetterPressed(letter);
+                  }
+                } : null,
                 child: Container(
                   alignment: Alignment.center,
                   margin: const EdgeInsets.symmetric(
@@ -58,7 +84,7 @@ class _AlphabetState extends State<Alphabet> {
                   padding: const EdgeInsets.symmetric(
                       vertical: 17.0, horizontal: 13.0),
                   decoration: BoxDecoration(
-                      color: keyboardEnabled ? Colors.black87 : Colors.black12,
+                      color: (keyEnabled) ? Colors.black87 : Colors.black45,
                       borderRadius: BorderRadius.circular(6)),
                   child: tile,
                 ),
