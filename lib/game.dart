@@ -5,14 +5,16 @@ class WordSquare {
 
   Context get context => _context;
 
-  void init() {
+  Future<bool> init() async {
     List<Player> players = <Player>[
-      Player(Board(List.filled(25, Letter(), growable: false)), "Player 1")
+      Player(Board(List.generate(25, (index) { return Letter(index: index); }, growable: false)), "Player 1")
     ];
     List<List<Letter>> keys = <List<Letter>>[];
     int currentPlayerIndex = 0;
     String currentLetter = "";
 
     _context = Context(players, keys, currentLetter, currentPlayerIndex);
+
+    return true;
   }
 }

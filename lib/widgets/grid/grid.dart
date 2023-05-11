@@ -12,9 +12,9 @@ class Grid extends StatelessWidget {
       case GameColor.empty:
         return Colors.black54;
       case GameColor.confirmed:
-        return Colors.greenAccent;
+        return Colors.black87;
       case GameColor.selected:
-        return Colors.redAccent;
+        return Colors.amber[300]!;
       default:
         return Colors.black54;
     }

@@ -35,18 +35,34 @@ class _BoardState extends State<Board> {
     setState(() {
       if (selectedCellIndex == index) {
         selectedCellIndex = null;
+        widget._game.context.players[widget._game.context.currentPlayerIndex]
+            .board.tiles
+            .where((element) => element.color == GameColor.selected)
+            .forEach((element) {
+          element.color = GameColor.empty;
+        });
       } else {
         var cell = widget._game.context
             .players[widget._game.context.currentPlayerIndex].board.tiles
             .elementAt(index);
-            
+
+        widget._game.context.players[widget._game.context.currentPlayerIndex]
+            .board.tiles
+            .where((element) => element.color == GameColor.selected)
+            .forEach((element) {
+          element.color = GameColor.empty;
+        });
+
         if (cell.value == "") {
           setState(() {
             selectedCellIndex = index;
             if (selectedCellIndex != null && selectedCellIndex! > -1) {
-              cell.index = index;
               cell.color = GameColor.selected;
             }
+          });
+        } else {
+          setState(() {
+            selectedCellIndex = null;
           });
         }
       }
@@ -64,6 +80,7 @@ class _BoardState extends State<Board> {
             .tiles[selectedCellIndex!];
         tile.value = letter;
         tile.color = GameColor.confirmed;
+        selectedCellIndex = null;
       }
     });
   }
