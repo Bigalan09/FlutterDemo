@@ -84,7 +84,7 @@ class _AlphabetState extends State<Alphabet> {
                   padding: const EdgeInsets.symmetric(
                       vertical: 17.0, horizontal: 13.0),
                   decoration: BoxDecoration(
-                      color: (keyEnabled) ? Colors.black87 : Colors.black45,
+                      color: (keyEnabled) ? Colors.black87 : (widget.keyboard.selectedLetter == letter) ? Colors.amber[300]! : Colors.black45,
                       borderRadius: BorderRadius.circular(6)),
                   child: tile,
                 ),
